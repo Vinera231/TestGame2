@@ -19,9 +19,9 @@ public class Player : MonoBehaviour
         if (_isGround && _velocity.y < 0)
             _velocity.y = -2f;
 
-        _moveX = Input.GetAxis("Horizontal");
+        _moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * _moveX + transform.forward * _moveZ;
+        Vector3 move = transform.forward * _moveZ;
         _controller.Move(_speed * Time.deltaTime * move);
 
         _velocity.y += gravity * Time.deltaTime;
