@@ -21,13 +21,13 @@ public class Player : MonoBehaviour
     private void Update()
     {
         _isGround = _controller.isGrounded;
+        _animationPlayer.PlayWalk();
 
         if (_isGround && _velocity.y < 0)
             _velocity.y = -2f;
 
         _moveZ = Input.GetAxis("Vertical");
        
-        _animationPlayer.PlayWalk();
         Vector3 move = transform.forward * _moveZ;
         _controller.Move(_speed * Time.deltaTime * move);
 
@@ -36,15 +36,17 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            _animationPlayer.PlayJump();
             Jump();
         }
     }
 
     public void Jump()
     {
-        if (_isGround && _canJump)
+        if (_isGround && _canJump) 
+        {
             _velocity.y = Mathf.Sqrt(_jump * -2f * gravity);
+            _animationPlayer.PlayJump();
+        }
     }
 
     public void PlayerDied()

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class AnimationPlayer : MonoBehaviour
 {
-    private readonly int s_animationWalk = Animator.StringToHash("Walk");
-    private readonly int s_animationJump = Animator.StringToHash("Jump");
+    private readonly int s_animationWalk = Animator.StringToHash("Idle Walk Run Blend");
+    private readonly int s_animationJump = Animator.StringToHash("InAir");
 
     [SerializeField] private Animator _animator;
 
