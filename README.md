@@ -1,1 +1,2 @@
-# TestGame2
+# TestGame
+Test Game
