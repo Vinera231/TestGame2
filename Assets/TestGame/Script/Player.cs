@@ -15,19 +15,22 @@ public class Player : MonoBehaviour
     public event Action Died;
     public event Action Won;
     private bool _isGround;
-    private float  _moveZ;
-    private bool _canJump = true;
+    private float _moveZ;
 
     private void Update()
     {
         _isGround = _controller.isGrounded;
-        _animationPlayer.PlayWalk();
 
         if (_isGround && _velocity.y < 0)
             _velocity.y = -2f;
 
         _moveZ = Input.GetAxis("Vertical");
-       
+
+        if (_moveZ != 0)
+            _animationPlayer.PlayWalk();
+        else
+            _animationPlayer.PlayIdle();
+
         Vector3 move = transform.forward * _moveZ;
         _controller.Move(_speed * Time.deltaTime * move);
 
@@ -42,7 +45,7 @@ public class Player : MonoBehaviour
 
     public void Jump()
     {
-        if (_isGround && _canJump) 
+        if (_isGround)
         {
             _velocity.y = Mathf.Sqrt(_jump * -2f * gravity);
             _animationPlayer.PlayJump();
@@ -55,8 +58,9 @@ public class Player : MonoBehaviour
         PauseSwitcher.Instance.Pause();
         _gameOverPanel.Show();
         AfterDied();
+        _animationPlayer.PlayIdle();
     }
-    
+
     public void PlayerWin()
     {
         Won?.Invoke();
