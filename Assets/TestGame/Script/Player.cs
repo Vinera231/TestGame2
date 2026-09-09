@@ -1,7 +1,9 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
+using UnityInput = UnityEngine.Input;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
     [SerializeField] private float gravity = -30f;
     [SerializeField] private float _speed = 8f;
@@ -19,12 +21,14 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        _isGround = _controller.isGrounded;
+        if (!IsOwner)
+            return;
 
+        _isGround = _controller.isGrounded;
         if (_isGround && _velocity.y < 0)
             _velocity.y = -2f;
 
-        _moveZ = Input.GetAxis("Vertical");
+        _moveZ = UnityInput.GetAxis("Vertical");
 
         if (_moveZ != 0)
             _animationPlayer.PlayWalk();
@@ -37,10 +41,13 @@ public class Player : MonoBehaviour
         _velocity.y += gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (UnityInput.GetKeyDown(KeyCode.Space))
         {
             Jump();
         }
+
+        if (UnityInput.GetKeyDown(KeyCode.E)) 
+           SendHelloServerRpc();    
     }
 
     public void Jump()
@@ -73,4 +80,14 @@ public class Player : MonoBehaviour
     {
         PauseSwitcher.Instance.Continue();
     }
+
+    [ServerRpc]
+    private void SendHelloServerRpc()
+    {
+        SendHelloClientRpc("Hello");
+    }
+
+    [ClientRpc]
+    private void SendHelloClientRpc(string message) =>
+        Debug.Log(message);
 }
