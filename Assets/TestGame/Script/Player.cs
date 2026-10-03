@@ -11,6 +11,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float _jump = 3f;
     [SerializeField] private CharacterController _controller;
     [SerializeField] private AnimationPlayer _animationPlayer;
+    [SerializeField] private GameObject _textHello;
     [SerializeField] private GameOverPanel _gameOverPanel;
     [SerializeField] private FinishPanel _finishPanel;
 
@@ -21,6 +22,8 @@ public class Player : NetworkBehaviour
 
     private void Update()
     {
+        Debug.Log($"ID: {OwnerClientId} | Owner: {IsOwner} | MoveZ: {_moveZ} | Position: {transform.position}");
+        
         if (!IsOwner)
             return;
 
@@ -40,6 +43,7 @@ public class Player : NetworkBehaviour
 
         _velocity.y += gravity * Time.deltaTime;
         _controller.Move(_velocity * Time.deltaTime);
+        Debug.Log($"AFTER MOVE | ID: {OwnerClientId} | Position: {transform.position}");
 
         if (UnityInput.GetKeyDown(KeyCode.Space))
         {
@@ -47,7 +51,10 @@ public class Player : NetworkBehaviour
         }
 
         if (UnityInput.GetKeyDown(KeyCode.E)) 
-           SendHelloServerRpc();    
+           SendHelloServerRpc();
+
+        if (UnityInput.GetKeyDown(KeyCode.Q))
+            BackMessageServerRpc();
     }
 
     public void Jump()
@@ -85,6 +92,13 @@ public class Player : NetworkBehaviour
     private void SendHelloServerRpc()
     {
         SendHelloClientRpc("Hello");
+        _textHello.SetActive(true);
+    }
+
+    [ServerRpc]
+    private void BackMessageServerRpc()
+    {
+        _textHello.SetActive(false);
     }
 
     [ClientRpc]
